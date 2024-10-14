@@ -24,6 +24,14 @@ def load_database(fileName):
 
 def divide_set_training(database, dimTestSet):
     dimDatabase = len(database[next(iter(database))])
+
+    if dimTestSet > dimDatabase:
+        raise ValueError("Database smaller then the chosen test set dimension")
+    elif dimTestSet == dimDatabase:
+        raise ValueError("No values usable for the training set")
+    elif dimTestSet == 0:
+        raise ValueError("No value usable for the test set")
+
     nTestSet = random.sample(range(1, dimDatabase - dimTestSet), dimTestSet)
 
     testSet = {}
@@ -33,4 +41,10 @@ def divide_set_training(database, dimTestSet):
         testSet[key] = [database[key][i] for i in nTestSet]
         trainingSet[key] = [database[key][i] for i in range(len(database[key])) if i not in nTestSet]
 
-    return testSet, trainingSet
+    resTestSet = testSet["Play"]
+    del testSet["Play"]
+
+    if len(testSet) != len(trainingSet) - 1:
+        raise ValueError("Different dimension of test set and training set")
+    
+    return testSet, trainingSet, resTestSet
