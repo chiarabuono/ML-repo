@@ -40,8 +40,9 @@ def divide_set_training(database, dimTestSet):
     for key in database:
         testSet[key] = [database[key][i] for i in nTestSet]
         trainingSet[key] = [database[key][i] for i in range(len(database[key])) if i not in nTestSet]
+        
 
-    resTestSet = testSet["Play"]
+    resTestSet = next(reversed(testSet))
     del testSet["Play"]
 
     if len(testSet) != len(trainingSet) - 1:
