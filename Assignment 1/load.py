@@ -29,8 +29,8 @@ def divide_set_training(database, dimTestSet):
         raise ValueError("Database smaller then the chosen test set dimension")
     elif dimTestSet == dimDatabase:
         raise ValueError("No values usable for the training set")
-    elif dimTestSet == 0:
-        raise ValueError("No value usable for the test set")
+    """elif dimTestSet == 0:
+        raise ValueError("No value usable for the test set")"""
 
     nTestSet = random.sample(range(1, dimDatabase - dimTestSet), dimTestSet)
 
@@ -41,11 +41,13 @@ def divide_set_training(database, dimTestSet):
         testSet[key] = [database[key][i] for i in nTestSet]
         trainingSet[key] = [database[key][i] for i in range(len(database[key])) if i not in nTestSet]
         
-
+    """
     resTestSet = next(reversed(testSet))
-    del testSet["Play"]
+    del testSet[resTestSet]
+    """
 
-    if len(testSet) != len(trainingSet) - 1:
+    if len(testSet) != len(trainingSet):
         raise ValueError("Different dimension of test set and training set")
     
-    return testSet, trainingSet, resTestSet
+    return testSet, trainingSet #, resTestSet
+

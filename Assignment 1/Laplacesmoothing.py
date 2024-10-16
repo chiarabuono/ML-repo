@@ -1,18 +1,4 @@
-def compute_prior(database):
-    """
-    The database is the class
-    """
-    classes = set(database)
-    class_counts = {}
-    for c in classes:
-        class_counts[c] = 0
-        for variable in database:
-            if variable == c:
-                class_counts[c] += 1
-        class_counts[c] /= len(database)
-    return class_counts
-
-def compute_likelihood(database, prior):
+def old_laplaceLikelihood(database, prior, a):
     classes = set(prior)
     value_counts = {}
     
@@ -24,7 +10,7 @@ def compute_likelihood(database, prior):
             continue
 
         value_counts[variable] = {}
-        
+        v = len(set(database[variable]))
         for c in classes:
             for i, value in enumerate(database[variable]):
                 if value not in value_counts[variable]:
@@ -38,19 +24,18 @@ def compute_likelihood(database, prior):
     for variable in value_counts:
         for value in value_counts[variable]:
             for c in classes:
-                value_counts[variable][value][c] /= (prior[c] * total_values)
-
+                value_counts[variable][value][c] = (value_counts[variable][value][c] + a) / ((prior[c] * total_values) + a * v)
 
     return value_counts
 
-def compute_posterior(database, likelihood, prior):
+def laplacePosterior(database, likelihood, prior, a):
     post = {c: [] for c in prior}
     predictions = []  
-
 
     for i in range(len(database[next(iter(database))])):
         prob = {}
         for key in likelihood:
+            v = len(likelihood[key])
             current_value = database[key][i]
             if current_value in likelihood[key]:
                 for c in likelihood[key][current_value]:
@@ -68,28 +53,29 @@ def compute_posterior(database, likelihood, prior):
         max_class = max(prob, key=prob.get) if prob else None
         predictions.append(max_class)
                 
-    return post, predictions   
+    return post, predictions  
+def laplaceLikelihood(database, prior, alpha):
+    valueCount = {}
+    classes = set(prior)
+    target_variable = next(reversed(database))
+    v = {variable: len(set(database[variable])) for variable in database if variable != 'Play'}
 
-def compute_accuracy(prediction, real):
-    accuracy = 0
+    for variable in database:
+        if variable == target_variable:
+            continue
+        valueCount[variable] = {}
+        for i, value in enumerate(database[variable]):
+            class_label = database[target_variable][i] 
+            if value not in valueCount[variable]:
+                valueCount[variable][value] = {c: 0 for c in classes}
+            valueCount[variable][value][class_label] += 1
 
-    for i in range(len(prediction)):  
-        if real[i] == prediction[i]:  
-            accuracy += 1
+    class_counts = {c: database[target_variable].count(c) for c in classes}
 
-    accuracy /= len(prediction)
-    return accuracy
-    
+    for variable in valueCount:
+        for value in valueCount[variable]:
+            for c in classes:
+                valueCount[variable][value][c] = (valueCount[variable][value][c] + alpha) / \
+                                                 (class_counts[c] + alpha * v[variable])
 
-def naiveBayesclassifier():
-    # check that test set and training set has the same amount of classes
-
-    # Check that no entry in any of the two data sets is <1
-
-    # Train a Naive Bayes classifier on the training set (first input argument), using its last column as the target
-
-    # Classify the test set according to the inferred rule, and return the classification obtained
-
-    # If the test set has a column number d+1, use this as a target, compute and return the error rate obtained (number of errors / m)
-
-    pass
+    return valueCount
