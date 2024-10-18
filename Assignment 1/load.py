@@ -32,8 +32,7 @@ def divide_set_training(database, dimTestSet):
     """elif dimTestSet == 0:
         raise ValueError("No value usable for the test set")"""
 
-    nTestSet = random.sample(range(1, dimDatabase - dimTestSet), dimTestSet)
-
+    nTestSet = random.sample(range(dimDatabase), dimTestSet)
     testSet = {}
     trainingSet = {}
 

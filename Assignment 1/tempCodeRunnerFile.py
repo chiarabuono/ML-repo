@@ -1,11 +1,11 @@
 from load import load_database, divide_set_training
-from naiveBayesclassifier import compute_prior, compute_likelihood, compute_posterior, compute_accuracy
+from naiveBayesclassifier import compute_prior, compute_likelihood, compute_posterior, compute_accuracy, computePosterior
 from display import display, old_display, display_comparison
-from Laplacesmoothing import laplaceLikelihood
+from Laplacesmoothing import laplaceLikelihood, compute_Llikelihood
 
 database = load_database("weather_data.txt")
 dim_test_set = 4
-iterations = 10000
+iterations = 1
 
 accuracies = []
 accuraciesLaplace = []
@@ -21,7 +21,7 @@ for _ in range(iterations):
 
     likelihood = compute_likelihood(training_set, prior_training)
     poster = compute_posterior(training_set, likelihood, prior_training)
-    postertest, predictions = compute_posterior(test_set, likelihood, prior_test)
+    postertest, predictions = computePosterior(test_set, likelihood, prior_test)
     accuracy = compute_accuracy(predictions, test_set["Play"])
     accuracies.append(accuracy)
 
@@ -30,6 +30,6 @@ for _ in range(iterations):
     accuracyL = compute_accuracy(lpredictions, test_set["Play"])
     accuraciesLaplace.append(accuracyL)
 
-display_comparison(accuracies, "naive Bayes classifier", accuraciesLaplace, "Laplace")
+display_comparison(accuracies, accuraciesLaplace)
 
 print(poster)

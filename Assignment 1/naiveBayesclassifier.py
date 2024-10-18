@@ -1,15 +1,8 @@
 def compute_prior(database):
-    """
-    The database is the class
-    """
-    classes = set(database)
     class_counts = {}
-    for c in classes:
-        class_counts[c] = 0
-        for variable in database:
-            if variable == c:
-                class_counts[c] += 1
-        class_counts[c] /= len(database)
+    total_count = len(database)
+    for label in database:
+        class_counts[label] = database.count(label) / total_count
     return class_counts
 
 def compute_likelihood(database, prior):
