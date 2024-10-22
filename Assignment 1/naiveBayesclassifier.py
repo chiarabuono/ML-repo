@@ -63,12 +63,12 @@ def compute_posterior(database, likelihood, prior):
                 
     return post, predictions   
 
-def compute_accuracy(prediction, real):
-    accuracy = 0
+def compute_errorRate(prediction, real):
+    errorRate = 0
 
     for i in range(len(prediction)):  
-        if real[i] == prediction[i]:  
-            accuracy += 1
+        if real[i] != prediction[i]:  
+            errorRate += 1
 
-    accuracy /= len(prediction)
-    return accuracy
+    errorRate /= len(prediction)
+    return errorRate
