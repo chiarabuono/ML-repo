@@ -41,5 +41,6 @@ def show_prediction_with_missingdata(test_set, poster, predictions, real):
         print()
         for c in poster:
             print(f"{c}: {poster[c][e]}")
-        print(f"Reality: {real[e]}")
+        if real[e] != "N/A":
+            print(f"Reality: {real[e]}")
         print(f"Prediction: {predictions[e]}\n")
