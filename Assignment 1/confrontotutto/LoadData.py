@@ -23,7 +23,6 @@ def loadData (data,tsLength):
 
     if(tsLength > len(data_rows)):
         raise ValueError("Lenght greatest than the size of the database")
-    print(len(data_rows))
     
     trainingSetIndices = random.sample(range(len(data_rows)), tsLength)
     trainingSet = {col: [data_dict[col][i] for i in trainingSetIndices] for col in columns}
