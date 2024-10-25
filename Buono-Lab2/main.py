@@ -1,19 +1,11 @@
 import pandas as pd
+import matplotlib.pyplot as plt
 
-# Carica il file CSV
 df = pd.read_csv("turkish-se-SP500vsMSCI.csv")
 
-# Stampa l'intero DataFrame per vedere i dati caricati
-print(df)
-print("...................")
+coordinates = df.columns
+axisX = df[coordinates[0]].tolist()
+axisY = df[coordinates[1]].tolist()
 
-# Controlla il nome delle colonne
-print(df.columns)  # Stampa i nomi delle colonne per vedere come sono chiamate
-
-# Estrai due colonne specifiche utilizzando i nomi delle colonne
-colonna1 = df["-0.004679315"].tolist()  # Sostituisci 'NomeColonna1' con il nome reale
-colonna2 = df["0.012698039"].tolist()  # Sostituisci 'NomeColonna2' con il nome reale
-
-# Stampa le due liste
-for line in colonna1:
-    print(line)
+plt.scatter(axisX, axisY)
+plt.show()
