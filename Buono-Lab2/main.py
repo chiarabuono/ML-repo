@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-from load import fromdicttolist
+from load import fromdicttolist, randomSubset
 from linearRegression import computeOneDimensional, computeOneDimensionaWITHinterception, computeMultipleDimensional
 from display import oneDimensionalGraph, multiDimensional
 
@@ -26,9 +26,7 @@ plt.legend()
 # point 2
 
 for e in range(2):
-    dimSubset = round(0.1 * len(turkish))
-    randomSubset = np.random.permutation(len(turkish))[:dimSubset]
-    turkishSubSet = [turkish[e] for e in randomSubset]
+    turkishSubSet = randomSubset(turkish, 0.1)
     turkishOneDimensional = computeOneDimensional(turkishSubSet)
 
 # point 2 
@@ -41,11 +39,6 @@ cars = pd.read_csv("mtcarsdata-4features.csv")
 cars.columns = cars.columns.str.replace(" ", "")
 cars = cars.to_dict(orient="records")
 
-#dimSubset = round(len(cars))
-#randomSubset = np.random.permutation(len(cars))[:dimSubset]
-#carsSubSetdict = [cars[e] for e in randomSubset]
-
-
 variables = ["weight", "mpg"]
 carsSubSetlist = fromdicttolist(cars, variables)
 
@@ -54,6 +47,7 @@ oneDimensionalGraph(variables, carsSubSetlist, cars1Dimwith[0], cars1Dimwith[1])
 plt.legend()
 #plt.show()
 
+# point 4
 carsMultipleDimvar = ["disp", "hp", "weight"]
 carsMultipleList = fromdicttolist(cars, carsMultipleDimvar)
 
@@ -61,3 +55,28 @@ goalLabel = ["mpg"]
 carsMPG = fromdicttolist(cars, goalLabel)
 carsMultDim = computeMultipleDimensional(carsMultipleList, carsMPG)
 multiDimensional(carsMPG, carsMultDim)
+
+""" TASK 3 - part 1 """
+perc = 0.05
+# point 1
+turkishpercent = randomSubset(turkish, perc)
+turkishpercOneDimensional = computeOneDimensional(turkishSubSet)
+
+oneDimensionalGraph(coordinates, turkishpercent, turkishpercOneDimensional, 0)
+plt.legend()
+plt.show()
+
+# point 3
+carsSubsetperc = randomSubset(carsSubSetlist, perc)
+cars1Dimwithperc = computeOneDimensionaWITHinterception(carsSubsetperc)
+oneDimensionalGraph(variables, carsSubsetperc, cars1Dimwithperc[0], cars1Dimwithperc[1])
+plt.legend()
+plt.show()
+
+# point 4
+carsMultipleperc = randomSubset(carsMultipleList, perc)
+carsMPG = fromdicttolist(cars, goalLabel)
+carsMultDimperc = computeMultipleDimensional(carsMultipleperc, carsMPG)
+multiDimensional(carsMPG, carsMultDimperc)
+
+""" TASK 1 - part 2"""

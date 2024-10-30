@@ -1,8 +1,5 @@
 import numpy as np
 
-def createRandomSubSet():
-    pass
-
 def computeOneDimensional(database):
     """
     database: list of 2-element lists where each element is [x, t]
@@ -56,3 +53,6 @@ def computeMultipleDimensional(database, mpg):
         e.insert(0, 1)
     w = wMultipleDimensional(database, mpg)
     return np.dot(database, w)
+
+def computeMeanSquareError():
+    pass
