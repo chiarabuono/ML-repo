@@ -4,7 +4,7 @@ import random
 def random_color():
     return (random.random(), random.random(), random.random())
 
-def oneDimensionalGraph(subset, angularCoefficient, offset):
+def oneDimensionalGraph(label, subset, angularCoefficient, offset):
     colour = random_color()
 
     x_points = [e[0] for e in subset]
@@ -19,5 +19,10 @@ def oneDimensionalGraph(subset, angularCoefficient, offset):
         plt.plot(xline, yline, color=colour, label=f'One dimensional model y = {round(angularCoefficient, 3)} x')
 
     plt.title('Linear regression of a one dimensional model')
-    plt.xlabel('X')
-    plt.ylabel('Y')
+    plt.xlabel(label[0])
+    plt.ylabel(label[1])
+
+def multiDimensional(expected, predicted):
+    print(f"Expected\tPredicted")
+    for e in range(len(expected)):
+        print(f"{expected[e]}\t{predicted[e]}")

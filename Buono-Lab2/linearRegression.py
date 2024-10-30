@@ -1,3 +1,5 @@
+import numpy as np
+
 def createRandomSubSet():
     pass
 
@@ -15,7 +17,7 @@ def computeOneDimensional(database):
 
 def computeOneDimensionaWITHinterception(database):
     """
-    database: list of 2-element lists where each element is [mpg, weights],
+    database: list of 2-element lists where each element is [weight, mpg],
             but it also works for any 2-number-pairs
     """
     if len(database) == 0: raise ValueError(f"{database} empty")
@@ -38,3 +40,19 @@ def computeOneDimensionaWITHinterception(database):
     w0 = mean1 - (w1 * mean0) if w1 != None else None
     
     return w1, w0
+
+def wMultipleDimensional(matrixX, t):
+    """
+    returns w
+    """
+    matrixX = np.array(matrixX)
+    return np.dot(np.dot(np.linalg.pinv(np.dot(matrixX.T, matrixX)), matrixX.T), t) 
+
+def computeMultipleDimensional(database, mpg):
+    """
+    database: list of three elements where ["disp", "hp", "weight"]
+    """
+    for e in database:
+        e.insert(0, 1)
+    w = wMultipleDimensional(database, mpg)
+    return np.dot(database, w)
