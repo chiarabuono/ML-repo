@@ -24,16 +24,18 @@ for e in range(2):
     turkishOneDimensional = computeOneDimensional(turkishSubSet)
 
 # point 2 
-    oneDimensionalGraph(turkishSubSet, turkishOneDimensional)
+    oneDimensionalGraph(turkishSubSet, turkishOneDimensional, 0)
 plt.legend()
-#plt.show()
+plt.show()
 
 # point 3
 cars = pd.read_csv("mtcarsdata-4features.csv")
 cars.columns = cars.columns.str.replace(" ", "")
+print(len(cars))
 cars = cars.to_dict(orient="records")
+print(len(cars))
 
-dimSubset = round(0.1 * len(cars))
+dimSubset = round(len(cars))
 randomSubset = np.random.permutation(len(cars))[:dimSubset]
 carsSubSetdict = [cars[e] for e in randomSubset]
 
@@ -46,3 +48,8 @@ for e in carsSubSetdict:
             element.append(e[key])
     carsSubSetlist.append(element)
 
+cars1Dimwith = computeOneDimensionaWITHinterception(carsSubSetlist)
+print(cars1Dimwith)
+oneDimensionalGraph(carsSubSetlist, cars1Dimwith[0], cars1Dimwith[1])
+plt.legend()
+plt.show()
