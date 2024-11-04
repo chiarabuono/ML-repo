@@ -45,14 +45,32 @@ def wMultipleDimensional(matrixX, t):
     matrixX = np.array(matrixX)
     return np.dot(np.dot(np.linalg.pinv(np.dot(matrixX.T, matrixX)), matrixX.T), t) 
 
-def computeMultipleDimensional(database, mpg):
+def computeMultipleDimensional(database, target):
     """
     database: list of three elements where ["disp", "hp", "weight"]
+    target: column matrix of the target
     """
     for e in database:
         e.insert(0, 1)
-    w = wMultipleDimensional(database, mpg)
+    w = wMultipleDimensional(database, target)
     return np.dot(database, w)
 
-def computeMeanSquareError():
-    pass
+def computelinearpredict(database, angularCoefficient, offset = 0):
+    predict = []
+    for e in database:
+        predict.append(angularCoefficient * e + offset)
+    return predict
+
+def computeMeanSquareError(expected, predicted):
+    """
+    expected : list
+    predicted : list
+    """
+    error = 0
+    #print("expected----------")
+    #print(np.array(expected).T[0])
+    #print("predicted----------")
+    #print(predicted.T[0])
+    for e in range(len(expected)):
+        error += (expected[e] - predicted[e])**2
+    return error/len(expected)

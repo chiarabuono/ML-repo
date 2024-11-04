@@ -2,37 +2,36 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-from load import fromdicttolist, randomSubset
+from load import fromdicttolist, randomSubset, divideTrainingandTestRandomly
 from linearRegression import computeOneDimensional, computeOneDimensionaWITHinterception, computeMultipleDimensional
+from linearRegression import computeMeanSquareError, computelinearpredict
 from display import oneDimensionalGraph, multiDimensional
+from trainingANDtest import dimensionalWithInterception
 
 turkish = pd.read_csv("turkish-se-SP500vsMSCI.csv")
 
 # display
 coordinates = turkish.columns
-axisX = turkish[coordinates[0]].tolist()
-axisY = turkish[coordinates[1]].tolist()
-#plt.scatter(axisX, axisY)
-#plt.show()
 
 """ TASK 1 """
+print("###-----Fit a linear regression model-----###")
 # point 1
 turkish = turkish.values.tolist()
 turkishOneDimensional = computeOneDimensional(turkish)
-oneDimensionalGraph(coordinates, turkish, turkishOneDimensional, 0)
+oneDimensionalGraph(coordinates, turkish, turkishOneDimensional)
 plt.legend()
-#plt.show()
+plt.show()
 
 # point 2
 
-for e in range(2):
+for e in range(5):
     turkishSubSet = randomSubset(turkish, 0.1)
     turkishOneDimensional = computeOneDimensional(turkishSubSet)
 
 # point 2 
-    oneDimensionalGraph(coordinates, turkishSubSet, turkishOneDimensional, 0)
+    oneDimensionalGraph(coordinates, turkishSubSet, turkishOneDimensional)
 plt.legend()
-#plt.show()
+plt.show()
 
 # point 3
 cars = pd.read_csv("mtcarsdata-4features.csv")
@@ -45,7 +44,7 @@ carsSubSetlist = fromdicttolist(cars, variables)
 cars1Dimwith = computeOneDimensionaWITHinterception(carsSubSetlist)
 oneDimensionalGraph(variables, carsSubSetlist, cars1Dimwith[0], cars1Dimwith[1])
 plt.legend()
-#plt.show()
+plt.show()
 
 # point 4
 carsMultipleDimvar = ["disp", "hp", "weight"]
@@ -56,27 +55,52 @@ carsMPG = fromdicttolist(cars, goalLabel)
 carsMultDim = computeMultipleDimensional(carsMultipleList, carsMPG)
 multiDimensional(carsMPG, carsMultDim)
 
-""" TASK 3 - part 1 """
-perc = 0.05
-# point 1
-turkishpercent = randomSubset(turkish, perc)
-turkishpercOneDimensional = computeOneDimensional(turkishSubSet)
+"""TASK 2"""
+print("###-----Test regression model-----###")
+perc = 0.15
 
-oneDimensionalGraph(coordinates, turkishpercent, turkishpercOneDimensional, 0)
-plt.legend()
-plt.show()
+repetitions = 10
 
-# point 3
-carsSubsetperc = randomSubset(carsSubSetlist, perc)
-cars1Dimwithperc = computeOneDimensionaWITHinterception(carsSubsetperc)
-oneDimensionalGraph(variables, carsSubsetperc, cars1Dimwithperc[0], cars1Dimwithperc[1])
-plt.legend()
-plt.show()
+print(f"\tTRAINING\tTEST\t\tTRAINING\tTEST\t\tTRAINING\t\tTEST\t\t")
+print(f"\t1D without\t1D without\t1D with\t\t1D with\t\tMulti-dimensional\tMulti-dimensional")
+print(f"\tinterception\tinterception\tinterception\tinterception\tinterception\t\tinterception")
+for i in range(repetitions):
+    # point 1
+    turkishpercenttraining, turkishpercenttest = divideTrainingandTestRandomly(turkish, perc)
 
-# point 4
-carsMultipleperc = randomSubset(carsMultipleList, perc)
-carsMPG = fromdicttolist(cars, goalLabel)
-carsMultDimperc = computeMultipleDimensional(carsMultipleperc, carsMPG)
-multiDimensional(carsMPG, carsMultDimperc)
+    wtraining = computeOneDimensional(turkishpercenttraining)
+    predictraining = computelinearpredict([e[0] for e in turkishpercenttraining], wtraining)                 # 1 for t (target)
+    meantraining = computeMeanSquareError([e[1] for e in turkishpercenttraining],predictraining)             # 0 for x
+    #print(f"TRAINING - One-dimensional problem without intercept: {meantraining}")
 
-""" TASK 1 - part 2"""
+    wtest = computeOneDimensional(turkishpercenttest)
+    predictest = computelinearpredict([e[0] for e in turkishpercenttest], wtest)
+    meantest = computeMeanSquareError([e[1] for e in turkishpercenttest], predictest)
+    #print(f"TEST - One-dimensional problem without intercept: {meantest}")
+
+
+    # point 3                                    
+    carsperctraining, carsperctest = divideTrainingandTestRandomly(carsSubSetlist, perc)    # 0 weight 1 mpg
+
+    w1training, w0training = computeOneDimensionaWITHinterception(carsperctraining)
+    carpredictraining = computelinearpredict([e[0] for e in carsperctraining], w1training, w0training)
+    carmeantraining = computeMeanSquareError([e[1] for e in carsperctraining] , carpredictraining)
+    #print(f"TRAINING - One-dimensional problem with intercept: {carmeantraining}")
+
+    w1test, w0test = computeOneDimensionaWITHinterception(carsperctest)
+    carpredictest = computelinearpredict([e[0] for e in carsperctest], w1test, w0test)
+    carmeantest = computeMeanSquareError([e[1] for e in carsperctest] , carpredictest)
+    #print(f"TEST - One-dimensional problem with intercept: {carmeantest}")
+
+    # point 4
+    carsmultraining, carsmultest, carsMPGsubtrain, carsMPGsubtest = divideTrainingandTestRandomly(carsMultipleList, perc, carsMPG)
+
+    carsmultrainPredict = computeMultipleDimensional(carsmultraining, carsMPGsubtrain)
+    carsMULTmeantraining = computeMeanSquareError(carsMPGsubtrain, [e[0] for e in carsmultrainPredict])
+    #print(f"TRAINING - Multi-dimensional problem: {carsMULTmeantraining[0]}")
+
+    carsmultestPredict = computeMultipleDimensional(carsmultest, carsMPGsubtest)
+    carsMULTmeantest = computeMeanSquareError(carsMPGsubtest, [e[0] for e in carsmultestPredict])
+    #print(f"TEST - Multi-dimensional problem: {carsMULTmeantest[0]}")
+
+    print(f"REP{i}. {meantraining:.3e}\t\t{meantest:.3e}\t{round(carmeantraining,3)}\t\t{round(carmeantest, 3)}\t\t{round(carsMULTmeantraining[0], 3)}\t\t\t{round(carsMULTmeantest[0],3)}")
