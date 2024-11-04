@@ -9,7 +9,6 @@ from display import oneDimensionalGraph, multiDimensional
 
 turkish = pd.read_csv("turkish-se-SP500vsMSCI.csv")
 
-# display
 coordinates = turkish.columns
 
 """ TASK 1 """
@@ -19,7 +18,7 @@ turkish = turkish.values.tolist()
 turkishOneDimensional = computeOneDimensional(turkish)
 oneDimensionalGraph(coordinates, turkish, turkishOneDimensional)
 plt.legend()
-#plt.show()
+plt.show()
 
 # point 2
 
@@ -30,7 +29,7 @@ for e in range(5):
 # point 2 
     oneDimensionalGraph(coordinates, turkishSubSet, turkishOneDimensional)
 plt.legend()
-#plt.show()
+plt.show()
 
 # point 3
 cars = pd.read_csv("mtcarsdata-4features.csv")
@@ -43,7 +42,7 @@ carsSubSetlist = fromdicttolist(cars, variables)
 cars1Dimwith = computeOneDimensionaWITHinterception(carsSubSetlist)
 oneDimensionalGraph(variables, carsSubSetlist, cars1Dimwith[0], cars1Dimwith[1])
 plt.legend()
-#plt.show()
+plt.show()
 
 # point 4
 carsMultipleDimvar = ["disp", "hp", "weight"]
@@ -93,12 +92,12 @@ for i in range(repetitions):
     # point 4
     carsmultraining, carsmultest,carsMPGsubtrain, carsMPGsubtest = divideTrainingandTestRandomly(carsMultipleList, perc, carsMPG)
     carsmultrainPredict= computeMultipleDimensional(carsmultraining, carsMPGsubtrain)
-    carsMULTmeantraining = computeMeanSquareError(carsMPGsubtrain, [e for e in carsmultrainPredict])
+    carsMULTmeantraining = computeMeanSquareError(carsMPGsubtrain, [e[0] for e in carsmultrainPredict])
     #print(f"TRAINING - Multi-dimensional problem: {carsMULTmeantraining[0]}")
 
     wMultipleDimensionalcars = wMultipleDimensional(carsmultraining, carsMPGsubtrain)
     carsmultestPredict = computeMultipleDimensional(carsmultest, carsMPGsubtest, wMultipleDimensionalcars)
-    carsMULTmeantest = computeMeanSquareError(carsMPGsubtest, [e for e in carsmultestPredict])
+    carsMULTmeantest = computeMeanSquareError(carsMPGsubtest, [e[0] for e in carsmultestPredict])
     #print(f"TEST - Multi-dimensional problem: {carsMULTmeantest[0]}")
 
     print(f"REP{i}. {meantraining:.3e}\t\t{meantest:.3e}\t{round(carmeantraining,3)}\t\t{round(carmeantest, 3)}\t\t{round(carsMULTmeantraining[0], 3)}\t\t\t{round(carsMULTmeantest[0],3)}")
