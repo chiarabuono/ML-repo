@@ -66,10 +66,7 @@ def computeMeanSquareError(expected, predicted):
     predicted : list
     """
     error = 0
-    for e in range(len(expected)):
-        temp = (expected[e] - predicted[e])**2
-        #print(f"{expected[e]=}\t{predicted[e]=}\t {temp=}\t{error}")
-        
+    for e in range(len(expected)):      
         error += (expected[e] - predicted[e])**2
         
     return error/len(expected)

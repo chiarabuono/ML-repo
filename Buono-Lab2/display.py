@@ -9,7 +9,7 @@ def oneDimensionalGraph(label, subset, angularCoefficient, offset = 0):
 
     x_points = [e[0] for e in subset]
     y_points = [e[1] for e in subset]
-    plt.scatter(x_points, y_points, color=colour, label='subset', s=50)
+    plt.scatter(x_points, y_points, color=colour, label='subset', s=20)
 
     minx, maxx = min(x_points), max(x_points)
     xline = [minx, maxx]
