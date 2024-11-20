@@ -11,7 +11,8 @@ def knnClassifier(training, test, trainingtarg, k, testarg = None):
     """
 
     #Check that the number of arguments received (nargin) equals at least the number of mandatory arguments
-
+    if (training == None or test == None or trainingtarg == None): 
+        raise ValueError("Number of arguments received (nargin) is not equal to the number of mandatory arguments")
     #Check that the number of columns of the second matrix equals the number of columns of the first matrix
     for e in range(len(test)): 
         if len(test[e]) != len(training[e]) or (len(test[e]) != len(test[e-1]) and e != 0): 
@@ -39,7 +40,7 @@ def knnClassifier(training, test, trainingtarg, k, testarg = None):
     #If the test set has the optional additional column (nargin == n.mandatory + 1), use this as a target, 
     #compute and return the error rate obtained (number of errors / m)
     error = computeErrorRate([int(t) for t in testarg], predictions)
-    return error
+    return predictions, error
 
 
 def vectorNorm(vect1, vect2):
@@ -51,9 +52,6 @@ def vectorNorm(vect1, vect2):
 
 def computeErrorRate(realities, predictions):
     errors = 0
-    print(realities)
-    print(predictions)
     for r in range(len(realities)):
-        #print(realities[r], predictions[r])
         if realities[r] != predictions[r]: errors += 1
     return errors/len(realities)
