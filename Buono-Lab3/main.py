@@ -7,18 +7,17 @@ from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, classification_report
+import pandas as pd
 
 from load import divideTrainingandTestRandomly
-from knn import knnClassifier
-from display import confusionMatrix, plotMultipleConfusionMatrices
+from knn import knnClassifier, computeConfusionmatrix, turnToBinaryMatrix, compute_mean
+from display import plotMultipleConfusionMatrices, qualityIdx, plotAllQualityInOne
+
+
 
 wine = load_wine()
 X, y = wine.data, wine.target
 
-#for e in X:
-#    for t in e:
-#        print(t, end="\t")
-#    print()
 
 #print("Shape X:", X.shape)
 #print("Shape y:", y.shape)
@@ -30,33 +29,57 @@ for t in X_scaled:
     np.set_printoptions(suppress=True, precision=2)
     #print(t)
 
-
-training, test, targetTraining, targetTest = divideTrainingandTestRandomly(X_scaled, 0.7, y)
-predictions, error = knnClassifier(training, test, targetTraining, 5, targetTest)
-#confusionMatrix(predictions, targetTest)
-
-#compute a confusion matrix, and then from it classification quality indexes. 
-
-
 k_values = [1, 2, 3, 4, 5, 10, 20, 25, 30, 35, 40, 50]
-divided_by_classes = {}
-for c in set(targetTraining):
-    divided_by_classes[c] = []
-for k in k_values:
-    if k % 3 == 0: continue
-    predictions, error = knnClassifier(training, test, targetTraining, k, targetTest)
-    confusion = confusionMatrix(predictions, targetTest)
-    for c in set(targetTraining):
-        divided_by_classes[c].append(confusion[c])
+
+accuracy = {k:{c: []  for c in set(y)} for k in k_values}
+precision = {k:{c: [] for c in set(y)} for k in k_values}
+recall = {k:{c: [] for c in set(y)} for k in k_values}
+f1score = {k:{c: [] for c in set(y)} for k in k_values}
+
+iterations = 10
+
+for i in range(iterations):
+    training, test, targetTraining, targetTest = divideTrainingandTestRandomly(X_scaled, 0.7, y)
+    classes = set(targetTraining)
+    trbinarymatrix = turnToBinaryMatrix(targetTraining)
+    testbinarymatrix = turnToBinaryMatrix(targetTest)
+
+    divided_by_classes = {c:[] for c in classes}
+    for k in k_values:
+        for c in range(len(classes)):
+            # Convert targets to binary format for current class
+            binaryTrainTarget = [row[c] for row in trbinarymatrix]
+            binaryTestTarget = [row[c] for row in testbinarymatrix]
+            
+            # Classify using kNN
+            predictions, error = knnClassifier(training, test, binaryTrainTarget, k, binaryTestTarget)
+
+            #compute a confusion matrix, and then from it classification quality indexes.
+            confusion = computeConfusionmatrix(predictions, binaryTestTarget)
+
+            indexQuality = qualityIdx(confusion)
+            accuracy[k][c].append(indexQuality["accuracy"])
+            precision[k][c].append(indexQuality["precision"])
+            recall[k][c].append(indexQuality["recall"])
+            f1score[k][c].append(indexQuality["F1 score"])
+            
+            divided_by_classes[c].append(confusion)
+
+
+meanAccuracy = compute_mean(accuracy)
+meanPrecision = compute_mean(precision)
+meanRecall =compute_mean(recall)
+meanf1score = compute_mean(f1score)
 
 for c in divided_by_classes:
     plotMultipleConfusionMatrices(divided_by_classes[c], c)
 
-
-
+# Summarise these in appropriate tables. 
+plotAllQualityInOne(meanAccuracy, meanPrecision, meanRecall, meanf1score)
+      
 
 # Provide an indication of typical value (e.g. an average, or a median) 
 
 # and an appropriate measure of spread (e.g. a standard deviation, or an interval between two relevant percentiles). 
 
-# Summarise these in appropriate tables. 
+

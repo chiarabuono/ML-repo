@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-def confusionMatrix(predictions, targetTest):
+"""def confusionMatrix(predictions, targetTest):
     classes = set(targetTest)
     completeConfusionMatrix = {}
     for c in classes:
@@ -14,10 +14,7 @@ def confusionMatrix(predictions, targetTest):
             else: confusion["False Positive"] += 1
         completeConfusionMatrix[c] = confusion
     return completeConfusionMatrix
-        #plotConfusionMatrix(confusion)
-        #quality = qualityIdx(confusion)
-        #print(f"\nClass {c}")
-        #plotQuality(quality)
+"""
 
         
 
@@ -53,8 +50,8 @@ def plotConfusionMatrix(matrix, ax):
         [matrix["False Negative"], matrix["True Negative"]]
     ])
 
-    labels = ["True Pos", "False Pos"]
-    ticks = ["False Neg", "True Neg"]
+    labels = ["Predict pos", "Predict neg"]
+    ticks = ["Actual pos", "Actual neg"]
 
     # Plot the confusion matrix on the provided `ax`
     cax = ax.matshow(conf_matrix, cmap="Blues")
@@ -108,8 +105,66 @@ def plotMultipleConfusionMatrices(matrices, clas):
             ax.axis('off')
 
     # Adjust spacing to bring plots closer together
-    plt.subplots_adjust(wspace=0.08, hspace=0.3)  # Reduce horizontal and vertical spacing
+    plt.subplots_adjust(wspace=0.2, hspace=0.3)  # Reduce horizontal and vertical spacing
     
     # Show the figure
     plt.show()
 
+def plotAllQuality(data, title):
+    # Convert data to a Pandas DataFrame
+    df = pd.DataFrame.from_dict(data, orient='index')
+    df = df.round(3)  # Arrotonda a 3 cifre decimali
+    df.columns = ['Class 0', 'Class 1', 'Class 2']
+    df.index.name = 'k'
+
+    # Visualizzazione come tabella con Matplotlib
+    fig, ax = plt.subplots(figsize=(8, 5))  # Dimensione della figura
+    ax.axis('tight')
+    ax.axis('off')
+    ax.set_title(f"{title}")
+    table = ax.table(cellText=df.values, colLabels=df.columns, rowLabels=df.index, cellLoc='center', loc='center')
+    table.auto_set_font_size(False)
+    table.set_fontsize(10)
+    table.auto_set_column_width(col=list(range(len(df.columns))))
+
+    plt.show()
+
+def plotAllQualityInOne(meanAccuracy, meanPrecision, meanRecall, meanf1score):
+    # Crea un dizionario con i dati e i relativi titoli
+    data_with_titles = {
+        "Accuracy": meanAccuracy,
+        "Precision": meanPrecision,
+        "Recall": meanRecall,
+        "F1 Score": meanf1score
+    }
+
+    # Imposta il layout delle sottotabelle
+    fig, axes = plt.subplots(2, 2, figsize=(12, 8))  # 2x2 griglia di subplots
+    axes = axes.flatten()  # Converte l'array 2D degli assi in un array 1D
+
+    for idx, (title, data) in enumerate(data_with_titles.items()):
+        # Converti i dati in un DataFrame
+        df = pd.DataFrame.from_dict(data, orient='index')
+        df = df.round(3)  # Arrotonda a 3 cifre decimali
+        df.columns = ['Class 0', 'Class 1', 'Class 2']
+        df.index.name = 'k'
+
+        # Imposta l'asse corrente
+        ax = axes[idx]
+        ax.axis('tight')
+        ax.axis('off')
+        ax.set_title(title, fontsize=14)
+
+        # Crea la tabella
+        table = ax.table(cellText=df.values, colLabels=df.columns, rowLabels=df.index, cellLoc='center', loc='center')
+        table.auto_set_font_size(False)
+        table.set_fontsize(10)
+        table.auto_set_column_width(col=list(range(len(df.columns))))
+
+    # Rimuove eventuali sottotrame vuote
+    for idx in range(len(data_with_titles), len(axes)):
+        fig.delaxes(axes[idx])
+
+    # Mostra la figura
+    plt.tight_layout()
+    plt.show()
