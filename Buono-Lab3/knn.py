@@ -15,9 +15,7 @@ def knnClassifier(training, test, trainingtarg, k, testarg = None):
     #Check that k>0 and k<=cardinality of the training set (number of rows, above referred to as n)
     if k < 0 or k > len(training): raise ValueError(f"Cardinality out of range. Use a number between 0 and {len(training)}")
     
-    #Classify the test set according to the kNN rule, and return the classification obtained
-    
-    
+    #Classify the test set according to the kNN rule, and return the classification obtained  
     predictions = []
     for e in range(len(test)):
         distances = []
@@ -74,12 +72,3 @@ def computeConfusionmatrix(predictions, binarytarget):
     }
     return confusion_matrix
 
-def compute_mean(qualityIndx):
-    accuracy = {k:{c: 0  for c in qualityIndx[k]} for k in qualityIndx}
-    for k in qualityIndx:
-        for c in qualityIndx[k]:
-            for i in qualityIndx[k][c]:
-                accuracy[k][c] += i
-            print(qualityIndx[k][c])
-            accuracy[k][c] = accuracy[k][c]/len(qualityIndx[k][c])
-    return accuracy

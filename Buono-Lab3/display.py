@@ -2,48 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-"""def confusionMatrix(predictions, targetTest):
-    classes = set(targetTest)
-    completeConfusionMatrix = {}
-    for c in classes:
-        confusion = {"True Positive": 0, "True Negative": 0, "False Positive": 0, "False Negative": 0}
-        for e in range(len(predictions)):
-            if targetTest[e] == predictions[e] and targetTest[e] == c: confusion["True Positive"] += 1
-            elif targetTest[e] != c and predictions[e] != c: confusion["True Negative"] += 1
-            elif targetTest[e] == c and predictions[e] != c: confusion["False Negative"] += 1
-            else: confusion["False Positive"] += 1
-        completeConfusionMatrix[c] = confusion
-    return completeConfusionMatrix
-"""
-
-        
-
-"""def plotConfusionMatrix(matrix):
-    conf_matrix = np.array([
-        [matrix["True Positive"], matrix["False Positive"]],
-        [matrix["False Negative"], matrix["True Negative"]]
-    ])
-
-    labels = [key for key in matrix if "Positive" in key]
-    ticks = [key for key in matrix if "Negative" in key]
-
-    fig, ax = plt.subplots(figsize=(6, 6))
-    cax = ax.matshow(conf_matrix, cmap="Blues")
-
-    fig.colorbar(cax)
-
-    ax.set_xticks([0, 1])
-    ax.set_yticks([0, 1])
-    ax.set_xticklabels(labels, rotation=0, ha="center")
-    ax.set_yticklabels(ticks, rotation = 90, ha="right")
-
-    for i in range(2):
-        for j in range(2):
-            ax.text(j, i, str(conf_matrix[i, j]), va='center', ha='center', color="black", fontsize=12)
-
-    plt.title("Confusion Matrix", pad=20)
-    #plt.xlabel("Predicted Conditions")
-    #plt.ylabel("Actual Conditions")"""
+      
 def plotConfusionMatrix(matrix, ax):
     conf_matrix = np.array([
         [matrix["True Positive"], matrix["False Positive"]],
@@ -74,20 +33,13 @@ def plotConfusionMatrix(matrix, ax):
         ax.figure.colorbar(cax, ax=ax, fraction=0.046, pad=0.04)
 
 
-def qualityIdx(confusionMatrix):
-    accuracy = (confusionMatrix["True Positive"] + confusionMatrix["True Negative"])/ sum(confusionMatrix[key] for key in confusionMatrix)
-    precision = confusionMatrix["True Positive"] / (confusionMatrix["True Positive"] + confusionMatrix["False Positive"])
-    recall = confusionMatrix["True Positive"] / (confusionMatrix["True Positive"] + confusionMatrix["False Negative"])
-    F1score = 2 *((precision * recall)/(precision + recall))
-
-    return {"accuracy": accuracy, "precision": precision, "recall": recall, "F1 score": F1score}
 
 def plotQuality(quality):
     for key in quality: 
         quality[key] = round(quality[key], 3) 
     
     table = pd.DataFrame.from_dict(quality, orient="index", columns=["Value"])
-    print(table)
+    #print(table)
 
 
 def plotMultipleConfusionMatrices(matrices, clas):
@@ -110,7 +62,7 @@ def plotMultipleConfusionMatrices(matrices, clas):
     # Show the figure
     plt.show()
 
-def plotAllQuality(data, title):
+def plotOneQuality(data, title):
     # Convert data to a Pandas DataFrame
     df = pd.DataFrame.from_dict(data, orient='index')
     df = df.round(3)  # Arrotonda a 3 cifre decimali
@@ -129,18 +81,20 @@ def plotAllQuality(data, title):
 
     plt.show()
 
-def plotAllQualityInOne(meanAccuracy, meanPrecision, meanRecall, meanf1score):
+def plotAllQualityInOne(meanAccuracy, meanError, meanPrecision, meanRecall, meanf1score, overall_title):
     # Crea un dizionario con i dati e i relativi titoli
     data_with_titles = {
         "Accuracy": meanAccuracy,
+        "Error": meanError,
         "Precision": meanPrecision,
         "Recall": meanRecall,
         "F1 Score": meanf1score
     }
 
     # Imposta il layout delle sottotabelle
-    fig, axes = plt.subplots(2, 2, figsize=(12, 8))  # 2x2 griglia di subplots
-    axes = axes.flatten()  # Converte l'array 2D degli assi in un array 1D
+    fig, axes = plt.subplots(2, 3, figsize=(14, 6))
+    axes = axes.flatten()
+    fig.suptitle(overall_title, fontsize=16, fontweight='bold', y=0.93)
 
     for idx, (title, data) in enumerate(data_with_titles.items()):
         # Converti i dati in un DataFrame
@@ -153,7 +107,7 @@ def plotAllQualityInOne(meanAccuracy, meanPrecision, meanRecall, meanf1score):
         ax = axes[idx]
         ax.axis('tight')
         ax.axis('off')
-        ax.set_title(title, fontsize=14)
+        ax.set_title(title, fontsize=14, y = 0.95)
 
         # Crea la tabella
         table = ax.table(cellText=df.values, colLabels=df.columns, rowLabels=df.index, cellLoc='center', loc='center')
@@ -165,6 +119,5 @@ def plotAllQualityInOne(meanAccuracy, meanPrecision, meanRecall, meanf1score):
     for idx in range(len(data_with_titles), len(axes)):
         fig.delaxes(axes[idx])
 
-    # Mostra la figura
-    plt.tight_layout()
+    plt.subplots_adjust(wspace=0.2, hspace=0.3)
     plt.show()
