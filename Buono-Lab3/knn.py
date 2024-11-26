@@ -4,7 +4,7 @@ from math import sqrt
 def knnClassifier(training, test, trainingtarg, k, testarg = None):
 
     #Check that the number of arguments received (nargin) equals at least the number of mandatory arguments
-    if (training == None or test == None or trainingtarg == None): 
+    if (training is None or test is None or trainingtarg is None): 
         raise ValueError("Number of arguments received (nargin) is not equal to the number of mandatory arguments")
     
     #Check that the number of columns of the second matrix equals the number of columns of the first matrix
@@ -27,7 +27,6 @@ def knnClassifier(training, test, trainingtarg, k, testarg = None):
 
         prediction = max(classes, key=classes.count)
         predictions.append(prediction)
-        #occurrence = classes.count(prediction)
     if testarg is None: return predictions
 
     #If the test set has the optional additional column (nargin == n.mandatory + 1), use this as a target, 
@@ -50,11 +49,10 @@ def computeErrorRate(realities, predictions):
 
 def turnToBinaryMatrix(vector):
     num_classes = len(set(vector))
-
     binary = []
     for e in vector:
         binary.append([1 if c == e else 0 for c in range(num_classes)])
-
+    
     return binary
 
 def computeConfusionmatrix(predictions, binarytarget):

@@ -6,14 +6,24 @@ def qualityIdx(confusionMatrix):
 
     return {"accuracy": accuracy, "precision": precision, "recall": recall, "F1 score": F1score}
 
-def compute_mean(qualityIndx):
-    mean = {k:{c: 0  for c in qualityIndx[k]} for k in qualityIndx}
+def compute_average(qualityIndx):
+    average = {k:{c: 0  for c in qualityIndx[k]} for k in qualityIndx}
     for k in qualityIndx:
         for c in qualityIndx[k]:
             for i in qualityIndx[k][c]:
-                mean[k][c] += i
-            mean[k][c] = mean[k][c]/len(qualityIndx[k][c])
-    return mean
+                average[k][c] += i
+            average[k][c] = average[k][c]/len(qualityIndx[k][c])
+
+    average_class = {k: 0 for k in average}
+    for k in average:
+        for c in average[k]:
+            average_class[k] += average[k][c]
+        average_class[k] = average_class[k]/len(average[k])
+        
+    for k in average:
+        average[k]["Average on class"] = average_class[k]
+    return average
+
 
 def compute_median(qualityIndx):
     median = {k: {c: 0 for c in qualityIndx[k]} for k in qualityIndx}
@@ -37,7 +47,7 @@ def compute_percentile(qualityIndx):
     perc = {k: {c: 0 for c in qualityIndx[k]} for k in qualityIndx}
     for k in qualityIndx:
         for c in qualityIndx[k]:
-            percentile_25 = np.percentile(qualityIndx[k][c], 25)  # 25° percentile
-            percentile_75 = np.percentile(qualityIndx[k][c], 75)  # 75° percentile
-            perc[k][c] = "(" + str(round(percentile_25, 3)) + ", " + str(round(percentile_75, 3)) + ")"
+            percentile_25 = np.percentile(qualityIndx[k][c], 25) 
+            percentile_75 = np.percentile(qualityIndx[k][c], 75) 
+            perc[k][c] = "[" + str(round(percentile_25, 3)) + ", " + str(round(percentile_75, 3)) + "]"
     return perc
