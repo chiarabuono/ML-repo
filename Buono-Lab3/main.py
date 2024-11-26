@@ -1,6 +1,5 @@
 from sklearn.datasets import load_wine
 import numpy as np
-from sklearn.metrics import confusion_matrix, classification_report
 
 from load import divideTrainingandTestRandomly
 from knn import knnClassifier, computeConfusionmatrix, turnToBinaryMatrix
@@ -73,6 +72,14 @@ averageError = compute_average(errors)
 averagePrecision = compute_average(precision)
 averageRecall =compute_average(recall)
 averagef1score = compute_average(f1score)
+
+max = averageAccuracy[next(iter(averageAccuracy))]["Average on class"]
+k_value = 0
+for k in averageAccuracy:
+    if averageAccuracy[k]["Average on class"] > max:
+        max = averageAccuracy[k]["Average on class"]
+        k_value = k
+print(f"The k that best approximates is {k} with accuracy {round(max, 3)}\n")
 
 medianAccuracy = compute_median(accuracy)
 medianError = compute_median(errors)

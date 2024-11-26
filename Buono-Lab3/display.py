@@ -107,7 +107,7 @@ def plotAllQualityInOne(averageAccuracy, averageError, averagePrecision, average
         axes[warning_idx].axis("off") 
         axes[warning_idx].text(0.5, 0.5, string,
                                wrap=True, horizontalalignment="center",
-                               verticalalignment="center", fontsize=12, color="black")
+                               verticalalignment="center", fontsize=10, color="black")
 
     for idx in range(len(data_with_titles) + 1, len(axes)):
         fig.delaxes(axes[idx])

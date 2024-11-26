@@ -1,4 +1,3 @@
-import numpy as np
 from math import sqrt
 
 def knnClassifier(training, test, trainingtarg, k, testarg = None):
